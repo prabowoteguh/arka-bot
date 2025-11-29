@@ -1,6 +1,9 @@
 const config = require('./Config/AppConfig');
 const GoogleCalendarService = require('./Services/GoogleCalendarService');
 const RoomController = require('./Controllers/RoomController');
+const express = require('express')
+const app = express()
+const port = 3000
 
 function startApp() {
     try {
@@ -29,5 +32,13 @@ function startApp() {
     }
 }
 
-// Jalankan aplikasi
+app.get('/', (req, res) => {
+  res.send('Aplikasi Telegram Bot telah berjalan dan siap untuk polling.')
+})
+
+app.listen(port, () => {
+  startApp();
+  console.log(`Example app listening on port ${port}`)
+})
+
 startApp();
