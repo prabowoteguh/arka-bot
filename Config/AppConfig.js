@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 // --- Konfigurasi Umum ---
-const SERVICE_ACCOUNT_CREDENTIALS = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
+const SERVICE_ACCOUNT_CREDENTIALS = process.env.SERVICE_ACCOUNT_CREDENTIALS;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID ; 
 
