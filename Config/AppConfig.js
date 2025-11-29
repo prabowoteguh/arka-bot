@@ -3,7 +3,6 @@ require('dotenv').config();
 // --- Konfigurasi Umum ---
 const SERVICE_ACCOUNT_CREDENTIALS = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const GOOGLE_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID ; 
 
 // Daftar ruangan yang dapat dibooking
@@ -22,7 +21,6 @@ const TIME_SLOTS = [
 module.exports = {
     TELEGRAM_BOT_TOKEN,
     SERVICE_ACCOUNT_CREDENTIALS,
-    GOOGLE_BOT_TOKEN,
     CALENDAR_ID,
     ROOMS,
     TIME_SLOTS
