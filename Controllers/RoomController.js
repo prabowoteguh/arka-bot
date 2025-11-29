@@ -1,39 +1,20 @@
 const TelegramBot = require('node-telegram-bot-api');
 
-/**
- * Kelas Controller untuk menangani interaksi Telegram dan manajemen state user.
- * Bertanggung jawab atas UI dan logika alur booking.
- * Diperbarui untuk mendukung mode Webhook untuk deployment Serverless (Vercel).
- */
 class RoomController {
     /**
      * @param {string} token Telegram Bot Token.
      * @param {GoogleCalendarService} calendarService Instance dari GoogleCalendarService.
      * @param {string[]} rooms Daftar nama ruangan.
      * @param {string[]} timeSlots Daftar slot waktu.
-     * @param {object} options Opsi bot (untuk Webhook).
      */
-    constructor(token, calendarService, rooms, timeSlots, options = {}) {
-        // Jika mode webHook diaktifkan, kita tidak mengaktifkan polling.
-        // Kita perlu memberikan URL webhook ke Telegram setelah deployment.
-        const botOptions = options.webHook ? { polling: false } : { polling: true };
-        this.bot = new TelegramBot(token, botOptions);
-        
+    constructor(token, calendarService, rooms, timeSlots) {
+        this.bot = new TelegramBot(token, { polling: true });
         this.calendarService = calendarService;
         this.rooms = rooms;
         this.timeSlots = timeSlots;
         this.userStates = {};
-        this.isWebhookMode = !!options.webHook;
 
         this._setupListeners();
-        
-        if (this.isWebhookMode) {
-             console.log("RoomController diinisialisasi dalam mode WEBHOOK (Polling Dinonaktifkan).");
-             // PENTING: Anda harus mengatur webhook secara manual setelah deploy ke Vercel.
-             // Contoh: https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://<DOMAIN_VERCEL>/<TOKEN>
-        } else {
-             console.log("RoomController diinisialisasi dalam mode POLLING.");
-        }
     }
 
     /**
@@ -43,19 +24,10 @@ class RoomController {
         this.bot.onText(/\/start/, this._handleStart.bind(this));
         this.bot.on('callback_query', this._handleCallbackQuery.bind(this));
         this.bot.on('message', this._handleMessage.bind(this));
-    }
-    
-    /**
-     * Ekspos metode untuk memproses update dari Webhook (digunakan oleh app.js).
-     * @param {object} update Objek update yang diterima dari Telegram.
-     */
-    processUpdate(update) {
-        // Memanggil handler internal bot Telegram dengan objek update
-        this.bot.processUpdate(update);
+        console.log("Listeners bot Telegram telah disiapkan.");
     }
 
     // --- Handlers Utama ---
-
     _handleStart(msg) {
         const chatId = msg.chat.id;
         this.userStates[chatId] = { 
@@ -135,7 +107,6 @@ class RoomController {
     }
     
     // --- Logika Navigasi UI (Private Methods) ---
-
     _showDateSelection(chatId, messageId) {
         this.userStates[chatId].step = 'select_date';
         
@@ -237,6 +208,7 @@ class RoomController {
 
     /**
      * Menampilkan ketersediaan ruangan (Memanggil Service).
+     * Telah diubah untuk memanggil metode service baru yang lebih efisien.
      */
     async _showAvailability(chatId, state, messageId) {
         const { selectedDate, startTime, endTime } = state;
